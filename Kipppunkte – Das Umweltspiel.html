@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kipppunkte – Das IPCC-Klimaspiel</title>
+<style>
+:root{--bg:#f4f2ea;--card:#fff;--tx:#1f2a24;--mu:#66726b;--bd:#d9d6c9;--ok:#3a9d5d;--wa:#e0a31b;--no:#d4492f;--ac:#2d6a4f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14201a;--card:#1c2b23;--tx:#e8efe9;--mu:#93a39a;--bd:#33463b;--ok:#4cc27a;--wa:#f0b93a;--no:#f06a50;--ac:#52b788;color-scheme:dark}}
+*{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1000px;margin:0 auto;padding:16px}
+h1{margin:0 0 4px;font-size:1.5rem}
+.sub{color:var(--mu);margin:0 0 12px}
+.top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.pill{background:var(--card);border:1px solid var(--bd);border-radius:999px;padding:4px 12px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+.card h2{font-size:1rem;margin:0 0 8px}
+.big{font-size:2rem;font-weight:700;line-height:1}
+.kv{display:flex;justify-content:space-between;font-size:.92rem;margin:3px 0}
+.kv span:last-child{font-weight:600}
+.bar{height:10px;border-radius:5px;background:var(--bd);overflow:hidden;margin:3px 0 8px}.bar i{display:block;height:100%}
+.lev{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.lev .n{flex:1}.lev .n b{display:block}.lev .n small{color:var(--mu)}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;padding:6px 12px}
+button.s{width:36px;padding:6px 0;font-weight:700}
+button.go{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700;width:100%;padding:10px;margin-top:6px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.d{min-width:64px;text-align:center;font-weight:700;font-size:.92rem}
+.tp{font-size:.88rem;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px}
+.tp small{color:var(--mu)}
+.hit{color:var(--no);font-weight:700}
+#log{max-height:200px;overflow:auto;font-size:.9rem;margin:0;padding-left:18px}#log li{margin-bottom:4px}
+.warn{color:var(--no);font-weight:600}
+.msg{padding:12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);margin-bottom:12px}
+.help{font-size:.86rem;color:var(--mu)}
+svg{width:100%;height:auto;display:block}
+.reg{margin-bottom:10px}.reg .kv{margin:0}.reg .r{display:flex;align-items:center;gap:6px}.reg .r .bar{flex:1;margin:4px 0}
+</style></head><body><main>
+<h1>Kipppunkte – das IPCC-Klimaspiel</h1>
+<p class="sub">Du lenkst die Weltklimapolitik von 2025 bis 2100. Halte die Erwärmung unter 2 °C, begrenze die Überschreitung von 1,5 °C und vermeide, dass Kipppunkte kippen – ohne Wirtschaft und Rückhalt in der Bevölkerung zu verlieren.</p>
+<div class="top"><span class="pill" id="yr"></span><span class="pill" id="ap"></span><button id="rs">Neues Spiel</button></div>
+<div id="end"></div>
+<div class="grid">
+<div>
+<div class="card"><h2>Klimazustand</h2>
+<div class="big" id="tt"></div>
+<svg id="ch" viewBox="0 0 320 150"></svg>
+<div id="kv"></div>
+<div class="help">Pariser Abkommen: deutlich unter 2 °C, möglichst 1,5 °C. Eine zeitweise Überschreitung von 1,5 °C („Overshoot“) ist in IPCC-Pfaden möglich, wenn die Temperatur später per CO₂-Entnahme wieder sinkt.</div></div>
+<div class="card"><h2>Gesellschaft</h2>
+<div class="kv"><span>Wohlstand</span><span id="wv"></span></div><div class="bar"><i id="wb"></i></div>
+<div class="kv"><span>Rückhalt der Klimapolitik</span><span id="av"></span></div><div class="bar"><i id="ab"></i></div>
+<div class="help">Fällt einer der Werte auf 0, scheitert deine Klimapolitik.</div></div>
+<div class="card"><h2>Regionale Akteure</h2><div id="rg"></div><div class="help">Jede Region setzt deine Maßnahmen nur so weit um, wie ihre Kooperationsbereitschaft reicht. Mit „Verhandeln“ (1 Aktionspunkt, +8 Kooperation) kannst du nachhelfen. Emissionsanteile grob gerundet: USA 12,5 %, China 30 %, EU 6,5 %, Indien 8 %, übrige Welt 43 %.</div></div>
+<div class="card"><h2>Highscore (dieser Browser)</h2><div id="hs"></div></div>
+</div>
+<div>
+<div class="card"><h2>Deine Maßnahmen für die nächsten 5 Jahre</h2><div id="lv"></div>
+<div class="kv"><span>Prognose Emissionen</span><span id="pe"></span></div>
+<div class="kv"><span>Prognose Temperatur nach dieser Runde</span><span id="pt"></span></div>
+<button class="go" id="go">Runde beenden (5 Jahre)</button></div>
+<div class="card"><h2>Kipppunkte im Erdsystem</h2><div id="tp"></div>
+<div class="help">Risiko pro Runde, dass das Element bei aktueller Temperatur kippt. Schwellenbereiche nach der Literatur, die der IPCC heranzieht (u. a. Armstrong McKay et al. 2022); sie sind unsicher und hier vereinfacht.</div></div>
+<div class="card"><h2>Chronik</h2><ul id="log"></ul></div>
+</div></div>
+<div class="card help"><b>Spielregeln:</b> Jede Runde entspricht 5 Jahren. Regionen reagieren auf Politik, Wahlen und Klimaschäden und verändern dadurch ihre Kooperation. Du hebst die Stufe (0–10) einzelner Maßnahmen an; jede Stufe kostet einen Aktionspunkt und Wohlstand. Senken ist kostenlos. Der Rückhalt in der Bevölkerung bestimmt, wie viele Aktionspunkte du hast (3–7). Grundlage: Weltweite Emissionen von rund 59 Gt CO₂-Äq (IPCC AR6, 2019), Erwärmung ca. 0,45 °C je 1000 Gt (vereinfachte TCRE-Näherung). Das ist ein Lernspiel und kein Klimamodell; Startwert 1,3 °C (AR6: 1,1 °C für 2011–2020, seitdem weiter gestiegen).</div>
+</main>
+<script>
+const $=i=>document.getElementById(i),f=(x,d=2)=>x.toFixed(d).replace('.',','),cl=x=>Math.max(0,Math.min(100,x));
+const K=.00045,Y0=2025,Y1=2100;
+const SEC=[
+['en','Energie','Erneuerbare statt Kohle, Öl und Gas',1.5],
+['in','Industrie & Verkehr','Elektrifizierung, Effizienz, Wasserstoff',2],
+['ag','Landwirtschaft & Methan','Methan, Düngung, Ernährung',1],
+['la','Wälder & Landnutzung','Entwaldung stoppen, aufforsten',.5],
+['cd','CO₂-Entnahme','Je Stufe ca. 1 Gt CO₂ pro Jahr',3],
+['ad','Anpassung','Küstenschutz, Hitzeschutz, Dürrevorsorge',1]];
+const TP=[
+['Korallenriffe (Warmwasser)',1,2],['Grönländisches Eisschild',.8,3],['Westantarktisches Eisschild',1,3],
+['Amazonas-Regenwald',2,6],['Permafrost (abrupter Tauprozess)',3,6],['AMOC (Atlantikströmung)',1.4,8]];
+const EV=[
+['Ein Vulkanausbruch kühlt das Klima kurzzeitig.',s=>{s.T-=.04}],
+['Hitzewellen und Dürren belasten die Wirtschaft.',s=>{s.W-=6}],
+['Durchbruch bei Speichertechnik: Klimaschutz wird günstiger.',s=>{s.W+=6}],
+['Eine Desinformationskampagne verunsichert die Bevölkerung.',s=>{s.A-=10}],
+['Ein internationaler Klimagipfel stärkt den Rückhalt.',s=>{s.A+=10}],
+['Wahl in den USA: Klimaskeptiker setzen sich durch.',s=>{s.C.us-=18}],
+['Wahl in den USA: eine klimafreundliche Regierung übernimmt.',s=>{s.C.us+=15}],
+['China kündigt einen ehrgeizigen Ausbau der Erneuerbaren an.',s=>{s.C.cn+=12}],
+['Die EU beschließt einen CO₂-Grenzausgleich: Handelspartner ziehen nach.',s=>{s.C.cn+=6;s.C.in+=6;s.C.rw+=4}],
+['Eine Schuldenkrise bremst den Klimaschutz in Indien und der übrigen Welt.',s=>{s.C.in-=10;s.C.rw-=10}],
+['Die Klimafinanzierung für Entwicklungsländer wird aufgestockt.',s=>{s.C.in+=8;s.C.rw+=8}]];
+let s,D,DC;
+const REG=[['us','USA',.125],['cn','China',.30],['eu','EU',.065],['in','Indien',.08],['rw','Übrige Welt',.43]];
+const Eg=(L,c)=>{const m=.5+.5*c/100;return 22*(1-.09*L.en*m)+25*(1-.09*L['in']*m)+8*(1-.06*L.ag*m)+(4-.6*L.la*m)};
+const Er=(L,i)=>REG[i][2]*Eg(L,s.C[REG[i][0]]);
+const E=L=>REG.reduce((a,r,i)=>a+Er(L,i),0)-L.cd;
+const esc=x=>String(x).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+const HK='kipppunkte-hs';
+function hsGet(){try{return JSON.parse(localStorage.getItem(HK))||[]}catch(e){return[]}}
+function hsHtml(){const l=hsGet();return l.length?'<ol style="margin:0;padding-left:20px">'+l.map(r=>`<li>${esc(r.n)}: <b>${r.p}</b> Punkte <small style="color:var(--mu)">(${r.y}, ${f(r.t)} °C${r.w?', geschafft':''})</small></li>`).join('')+'</ol>':'<div class="help">Noch keine Einträge. Beende eine Partie und trage dich ein.</div>'}
+function score(win){const n=s.tip.filter(Boolean).length;return Math.max(0,Math.round((s.yr-Y0)*4+Math.min(400,Math.max(0,800*(2-s.T)))+(TP.length-n)*60+s.W+s.A+(win?300:0)))}
+const ap=()=>3+Math.floor(s.A/25);
+const pos=()=>Object.values(D).reduce((a,b)=>a+Math.max(0,b),0)+Object.values(DC).reduce((a,b)=>a+b,0);
+const LD=()=>{const o={};SEC.forEach(([k])=>o[k]=s.L[k]+D[k]);return o};
+function init(){s={yr:Y0,T:1.3,W:70,A:60,L:{en:1,in:0,ag:0,la:0,cd:0,ad:0},h:[[Y0,1.3]],tip:TP.map(()=>false),over:false,C:{us:50,cn:55,eu:75,in:45,rw:40}};
+D={};SEC.forEach(([k])=>D[k]=0);DC={us:0,cn:0,eu:0,in:0,rw:0};$('log').innerHTML='';$('end').innerHTML='';log('2025: Das Spiel beginnt bei etwa 1,3 °C Erwärmung und rund 59 Gt Emissionen pro Jahr.');draw()}
+function log(t,w){const li=document.createElement('li');li.textContent=t;if(w)li.className='warn';$('log').prepend(li)}
+const risk=(i,T)=>{const[,lo,hi]=TP[i];return s.tip[i]?1:T>lo?Math.min(.35,.25*(T-lo)/(hi-lo)):0};
+function chart(){const x=y=>20+(y-Y0)/(Y1-Y0)*290,y=t=>135-(t-1)/(2.2-1)*120;
+let p=s.h.map((q,i)=>(i?'L':'M')+x(q[0]).toFixed(1)+' '+y(Math.min(2.2,q[1])).toFixed(1)).join(' ');
+const ln=(t,c,l)=>`<line x1="20" x2="310" y1="${y(t)}" y2="${y(t)}" stroke="${c}" stroke-dasharray="4 3"/><text x="22" y="${y(t)-3}" font-size="9" fill="${c}">${l}</text>`;
+$('ch').innerHTML=ln(1.5,'var(--wa)','1,5 °C')+ln(2,'var(--no)','2,0 °C')+`<path d="${p}" fill="none" stroke="var(--ac)" stroke-width="2.5"/><text x="20" y="147" font-size="9" fill="var(--mu)">2025</text><text x="296" y="147" font-size="9" fill="var(--mu)">2100</text>`}
+function draw(){
+const L=LD(),e0=E(s.L),C0={...s.C};REG.forEach(([k])=>s.C[k]=Math.min(100,C0[k]+8*DC[k]));const e=E(L);s.C=C0;const Tn=s.T+K*e*5;
+$('yr').textContent='Jahr '+s.yr;$('ap').textContent='Aktionspunkte: '+(ap()-pos())+' / '+ap();
+$('tt').innerHTML=f(s.T)+' °C <small style="font-size:.9rem;font-weight:400;color:var(--mu)">über vorindustriell</small>';
+$('tt').style.color=s.T>=1.9?'var(--no)':s.T>1.5?'var(--wa)':'var(--ok)';
+chart();
+const b15=(1.5-s.T)/K,b20=(2-s.T)/K;
+$('kv').innerHTML=`<div class="kv"><span>Emissionen aktuell</span><span>${f(e0,1)} Gt CO₂-Äq/Jahr</span></div><div class="kv"><span>Restbudget bis 1,5 °C</span><span class="${b15<0?'warn':''}">${b15<0?'überschritten ('+f(-b15,0)+' Gt)':f(b15,0)+' Gt'}</span></div><div class="kv"><span>Restbudget bis 2 °C</span><span>${f(b20,0)} Gt</span></div>`;
+$('wv').textContent=Math.round(s.W);$('av').textContent=Math.round(s.A);
+$('wb').style.cssText=`width:${s.W}%;background:${s.W<25?'var(--no)':'var(--ok)'}`;$('ab').style.cssText=`width:${s.A}%;background:${s.A<25?'var(--no)':'var(--ok)'}`;
+$('lv').innerHTML=SEC.map(([k,n,h])=>`<div class="lev"><div class="n"><b>${n}</b><small>${h}</small></div><button class="s" data-k="${k}" data-d="-1" ${s.over?'disabled':''}>−</button><span class="d">Stufe ${L[k]}${D[k]?' ('+(D[k]>0?'+':'')+D[k]+')':''}</span><button class="s" data-k="${k}" data-d="1" ${s.over?'disabled':''}>+</button></div>`).join('');
+$('pe').textContent=f(e,1)+' Gt/Jahr';$('pt').textContent=f(Tn)+' °C';$('pt').className=Tn>=2?'warn':'';
+$('tp').innerHTML=TP.map(([n,lo,hi],i)=>{const r=Math.round(100*risk(i,s.T));return `<div class="tp"><span>${n}<br><small>Schwelle ca. ${f(lo,1)}–${f(hi,1)} °C</small></span><span class="${s.tip[i]?'hit':''}">${s.tip[i]?'gekippt':r?r+' %':'sicher'}</span></div>`}).join('');
+$('rg').innerHTML=REG.map(([k,n],i)=>`<div class="reg"><div class="kv"><span><b>${n}</b></span><span>${f(Er(s.L,i),1)} Gt/Jahr · Kooperation ${Math.round(s.C[k])} %</span></div><div class="r"><div class="bar"><i style="width:${s.C[k]}%;background:${s.C[k]<30?'var(--no)':s.C[k]<60?'var(--wa)':'var(--ok)'}"></i></div><button class="s" data-r="${k}" data-d="-1" ${s.over?'disabled':''}>−</button><span class="d">${DC[k]?'+'+8*DC[k]:'Verhandeln'}</span><button class="s" data-r="${k}" data-d="1" ${s.over?'disabled':''}>+</button></div></div>`).join('');
+$('hs').innerHTML=hsHtml();$('go').disabled=s.over}
+$('rg').onclick=e=>{const b=e.target.closest('button');if(!b||s.over)return;const k=b.dataset.r,g=+b.dataset.d;if(g>0&&pos()>=ap())return;if(g<0&&DC[k]<=0)return;DC[k]+=g;draw()};
+$('lv').onclick=e=>{const b=e.target.closest('button');if(!b||s.over)return;const k=b.dataset.k,n=D[k]+ +b.dataset.d;
+if(s.L[k]+n<0||s.L[k]+n>10)return;const old=D[k];D[k]=n;if(pos()>ap())D[k]=old;draw()};
+function fin(t,ok){s.over=true;s.pts=score(ok);draw();$('end').innerHTML=`<div class="msg"><b>${t}</b><br>Deine Punktzahl: <b>${s.pts}</b><br><input id="nm" maxlength="16" placeholder="Dein Name" style="font:inherit;padding:6px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)"> <button id="sv">In Highscore eintragen</button><button class="go" onclick="init()">Neu starten</button></div>`;$('sv').onclick=()=>{const l=hsGet();l.push({n:($('nm').value||'Anonym').slice(0,16),p:s.pts,y:s.yr,t:s.T,w:!!ok});l.sort((a,b)=>b.p-a.p);try{localStorage.setItem(HK,JSON.stringify(l.slice(0,10)))}catch(e){}$('sv').disabled=true;draw()}}
+$('go').onclick=()=>{if(s.over)return;
+const ps=pos();SEC.forEach(([k,,,c])=>{if(D[k]>0)s.W-=D[k]*c;s.L[k]+=D[k];D[k]=0});
+REG.forEach(([k])=>{s.C[k]=Math.min(100,s.C[k]+8*DC[k]);s.W-=.5*DC[k];DC[k]=0});
+const e=E(s.L);s.T+=K*e*5;
+log(`${s.yr}–${s.yr+5}: Emissionen ${f(e,1)} Gt/Jahr, Temperatur jetzt ${f(s.T)} °C.`);
+s.W+=6-7*Math.pow(Math.max(0,s.T-1),2)*(1-.06*s.L.ad);
+s.A+=.1*(s.W-50)+4*(s.T-1)-1.5*Math.max(0,ps-4);
+REG.forEach(([k])=>s.C[k]+=.08*(s.A-50)+8*(s.T-1));
+TP.forEach(([n],i)=>{if(!s.tip[i]&&Math.random()<risk(i,s.T)){s.tip[i]=true;s.T+=.06;s.W-=5;log('KIPPPUNKT: '+n+' ist gekippt! Zusätzliche Erwärmung und wirtschaftliche Schäden.',1)}});
+if(Math.random()<.4){const ev=EV[Math.floor(Math.random()*EV.length)];ev[1](s);log(ev[0])}
+s.W=Math.min(100,s.W);s.A=cl(s.A);REG.forEach(([k])=>s.C[k]=cl(s.C[k]));s.yr+=5;s.h.push([s.yr,s.T]);
+if(s.T>=2)return fin(`Verloren: Die 2-°C-Schwelle wurde ${s.yr} überschritten (${f(s.T)} °C). Weitere Kipppunkte drohen.`);
+if(s.W<=0)return fin('Verloren: Die Wirtschaft ist kollabiert. Klimaschutz ist politisch nicht mehr durchsetzbar.');
+if(s.A<=0)return fin('Verloren: Der Rückhalt ist weg. Eine neue Regierung stoppt die Klimapolitik.');
+if(s.yr>=Y1){const n=s.tip.filter(Boolean).length,g=s.T<=1.5;
+return fin(`${g?'Gold: ':'Geschafft: '}${Y1} liegt die Erwärmung bei ${f(s.T)} °C. ${g?'Du hast die 1,5-°C-Grenze nach einem Overshoot wieder eingehalten!':'Die 2-°C-Schwelle hast du gehalten, 1,5 °C aber nicht wieder erreicht.'} Gekippte Kipppunkte: ${n} von ${TP.length}. Wohlstand ${Math.round(s.W)}, Rückhalt ${Math.round(s.A)}.`,true)}
+draw()};
+$('rs').onclick=init;init();
+</script></body></html>
